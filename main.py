@@ -14,12 +14,17 @@ game_name = 'internet.SlitherIO-v0'
 
 # Pixel location of the center screen
 center_x = 270
-center_y = 238
+center_y = 235
 # Game screen corners
-ul_x = 20
-ul_y = 85
-lr_x = 520
-lr_y = 385
+# ul_x = 20
+# ul_y = 85
+# lr_x = 520
+# lr_y = 385
+ul_x = 170
+ul_y = 135
+lr_x = 370
+lr_y = 335
+
 radius = 30
 resolution_points = 8
 degree_per_slice = 360//resolution_points
@@ -58,7 +63,7 @@ def downsample_and_flatten(vision):
     new_obs = new_obs.mean(axis=2)
     # downsample
     # new_obs = np.array(new_obs[::16, ::16])
-    new_obs = np.array(block_mean(new_obs, 10))
+    new_obs = np.array(block_mean(new_obs, 5))
     # 1d array
     new_obs = new_obs.flatten()
     return new_obs

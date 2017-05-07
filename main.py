@@ -66,9 +66,9 @@ def block_mean(ar, fact):
     assert isinstance(fact, int), type(fact)
     sx, sy = ar.shape
     X, Y = np.ogrid[0:sx, 0:sy]
-    regions = sy/fact * (X/fact) + Y/fact
+    regions = sy//fact * (X//fact) + Y//fact
     res = ndimage.mean(ar, labels=regions, index=np.arange(regions.max() + 1))
-    res.shape = (sx/fact, sy/fact)
+    res.shape = (sx//fact, sy//fact)
     return res
 
 
@@ -127,11 +127,6 @@ def simulate_species(net, env, episodes=1, steps=5000, render=False):
     fitness = np.array(fitnesses).mean()
     print("Species fitness: %s" % str(fitness))
     return fitness
-
-
-def worker_evaluate_genome(g):
-    net = nn.create_feed_forward_phenotype(g)
-    return simulate_species(net, my_env, args.episodes, args.max_steps, render=args.render)
 
 
 def train_network(env):

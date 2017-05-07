@@ -34,9 +34,6 @@ for point in range(resolution_points):
     coord = universe.spaces.PointerEvent(center_x + x_value_offset, center_y + x_value_offset, 0)
     action_sheet.append(coord)
 
-# Rules for actions that can't be taken at the same time
-rules = action_sheet
-
 ### End User Params ###
 
 
@@ -95,11 +92,10 @@ def simulate_species(net, env, episodes=1, steps=5000, render=False):
         cum_reward = 0.0
         for j in range(steps):
             if inputs[0] is not None:
-                new_obs = downsample_and_flatten(inputs[0]["vision"][ul_x:lr_x,ul_y:lr_y])
+                new_obs = downsample_and_flatten(inputs[0]["vision"][ul_y:lr_y, ul_x:lr_x])
                 outputs = net.serial_activate(new_obs)
             else:
                 outputs = np.zeros(len(action_sheet)).tolist()
-            print('OUTPUT:', outputs)
             inputs, reward, done, _ = env.step([get_actions(outputs) for ob in inputs])
             if render:
                 env.render()

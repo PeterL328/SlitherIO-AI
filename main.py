@@ -15,6 +15,11 @@ game_name = 'internet.SlitherIO-v0'
 # Pixel location of the center screen
 center_x = 270
 center_y = 238
+# Game screen corners
+ul_x = 20
+ul_y = 85
+lr_x = 520
+lr_y = 385
 radius = 30
 resolution_points = 8
 degree_per_slice = 360//resolution_points
@@ -56,7 +61,7 @@ def downsample_and_flatten(vision):
     new_obs = new_obs.mean(axis=2)
     # downsample
     # new_obs = np.array(new_obs[::16, ::16])
-    new_obs = np.array(block_mean(new_obs, 16))
+    new_obs = np.array(block_mean(new_obs, 10))
     # 1d array
     new_obs = new_obs.flatten()
     return new_obs
@@ -73,34 +78,14 @@ def block_mean(ar, fact):
 
 
 def get_actions(outputs):
-    actions = {}
-
+    actions = []
     for i in range(len(outputs)):
         if outputs[i] > 0:
-            actions[action_sheet[i][1]] = action_sheet[i] + (True,)
+            actions.append[action_sheet[i]]
         else:
-            actions[action_sheet[i][1]] = action_sheet[i] + (False,)
+            actions.append(universe.spaces.PointerEvent(center_x, center_y, 0))
 
-    for rule in rules:
-        next_action = True
-        for key in rule:
-            if key in actions:
-                next_action = actions[key][2] and next_action
-            elif len(rule) == 2: # if one key is missing in a rule of 2, keep the value
-                next_action = False
-
-        if next_action is True:
-            for key in rule:
-                if key in actions:
-                    l = list(actions[key])
-                    l[2] = False
-                    actions[key] = tuple(l)
-
-    arr = []
-    for key in actions:
-        arr.append(actions[key])
-
-    return arr
+    return actions
 
 
 def simulate_species(net, env, episodes=1, steps=5000, render=False):
@@ -110,11 +95,11 @@ def simulate_species(net, env, episodes=1, steps=5000, render=False):
         cum_reward = 0.0
         for j in range(steps):
             if inputs[0] is not None:
-                new_obs = downsample_and_flatten(inputs[0]["vision"])
+                new_obs = downsample_and_flatten(inputs[0]["vision"][ul_x:lr_x,ul_y:lr_y])
                 outputs = net.serial_activate(new_obs)
             else:
                 outputs = np.zeros(len(action_sheet)).tolist()
-
+            print('OUTPUT:', outputs)
             inputs, reward, done, _ = env.step([get_actions(outputs) for ob in inputs])
             if render:
                 env.render()

@@ -82,7 +82,7 @@ def block_mean(ar, fact):
 def get_actions(outputs):
     actions = []
     for i in range(len(outputs)):
-        if outputs[i] > 0:
+        if outputs[i] > 0.5:
             actions.append(action_sheet[i])
         else:
             actions.append(universe.spaces.PointerEvent(center_x, center_y, 0))

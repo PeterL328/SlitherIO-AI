@@ -83,7 +83,7 @@ def get_actions(outputs):
     actions = []
     for i in range(len(outputs)):
         if outputs[i] > 0:
-            actions.append[action_sheet[i]]
+            actions.append(action_sheet[i])
         else:
             actions.append(universe.spaces.PointerEvent(center_x, center_y, 0))
 

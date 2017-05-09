@@ -127,7 +127,7 @@ def train_network(env):
             g.fitness = fitness
 
     # Simulation
-    local_dir = os.path.dirname(__file__)
+    local_dir = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(local_dir, 'network_config')
     pop = population.Population(config_path)
     # Load checkpoint

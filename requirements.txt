@@ -1,6 +1,4 @@
 scipy==0.19.0
-gym==0.8.1
 numpy==1.12.1
 neat_python==0.8
 neat==0.4.1
-ansible_universe==1.11.23

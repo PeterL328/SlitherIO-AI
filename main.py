@@ -20,18 +20,33 @@ center_y = 235
 # ul_y = 85
 # lr_x = 520
 # lr_y = 385
+# The above bound might be too big so I just +-100 the center_x and center_y
 ul_x = 170
 ul_y = 135
 lr_x = 370
 lr_y = 335
 
+# The snake moves to the directing of the mouse
+# but to output the direction to a neural network we need to break the output to more discrete values
+
+# the radius is the distance from the head of the snake to the mouse pointer(in pixel)
 radius = 30
+# This is the number of points we want around the head of the snake
+# Ex: With 8 points where the mouse can be positioned around the head of the snake
+# Note the distance from the point to the head is the same for all
+#       *
+#     *   *
+#   *   s   *
+#     *   *
+#       *
+# You can add more resolution to this if you want but it may increase learning time
 resolution_points = 8
 degree_per_slice = 360//resolution_points
 
 # Available actions in the game
 action_sheet = []
 
+# We put all mouse positions in the action_sheet
 for point in range(resolution_points):
     degree = point*degree_per_slice
     x_value_offset = radius * math.sin(math.radians(degree))
@@ -58,13 +73,15 @@ args = parser.parse_args()
 
 
 def downsample_and_flatten(vision):
+    # Each cell in the matrix has a length 3 array
+    # Because each pixel has RGB values
     new_obs = np.array(vision)
-    # grayscale
+    # We average the RGB values into a single value(Greyscale)
     new_obs = new_obs.mean(axis=2)
-    # downsample
-    # new_obs = np.array(new_obs[::16, ::16])
+    # Then we group pixels of 5*5 blocks and average them into a single value
+    # So we can further reduce the input amount
     new_obs = np.array(block_mean(new_obs, 5))
-    # 1d array
+    # Next we turn the flatten the matrix into a 1-dimension array 
     new_obs = new_obs.flatten()
     return new_obs
 
@@ -93,13 +110,23 @@ def get_actions(outputs):
 def simulate_species(net, env, episodes=1, steps=5000, render=False):
     fitnesses = []
     for runs in range(episodes):
+        # Input has the information about the screen and the current state of the game
+        # We can get the screen pixels from it
         inputs = my_env.reset()
         cum_reward = 0.0
         for j in range(steps):
             if inputs[0] is not None:
+                # Here we pass in the screen corners
+                # We use the bounds because the whole screen is the browser window
+                # We just want the game window
                 new_obs = downsample_and_flatten(inputs[0]["vision"][ul_y:lr_y, ul_x:lr_x])
+                # The new_obs will be a one dimension array
                 outputs = net.serial_activate(new_obs)
             else:
+                # If there is no input
+                # Then just do nothing?
+                # TODO: The snake will always move around even if the mouse is pointed to the head
+                # IF we don't get any input maybe we can just let the snake go in a random direction
                 outputs = np.zeros(len(action_sheet)).tolist()
             inputs, reward, done, _ = env.step([get_actions(outputs) for ob in inputs])
             if render:

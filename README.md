@@ -1,8 +1,6 @@
 # SlitherIO-AI
 
-## Gym Setup Guide
-
-### Installation Guide
+## Installation Guide
 To run this program we need to install OpenAI gym at this [link](https://github.com/openai/gym) and OpenAI universe at this [link](https://github.com/openai/universe). We are using Python 3.5, but Python 2.7 should also work for this project. Just make sure to use `pip3` for Python 3.5 and `pip` for Python 2.7.
 
 Next, make sure to install the proper python packages for this project.
@@ -10,7 +8,7 @@ Next, make sure to install the proper python packages for this project.
 pip3 install scipy neat-python==0.8 argparse
 ```
 
-### Running the Program
+## Running the Program
 
 There are two files that are used to solve universe environments: `network_config` and `main.py`. 
 
